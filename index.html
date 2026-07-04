@@ -49,7 +49,7 @@
 </head>
 <body>
 
-<h2>তথ্য ইনপুট ফর্ম</h2>
+<h2>정보 입력 폼 (তথ্য ইনপুট ফর্ম)</h2>
 <form id="repeaterForm">
     <div id="repeaterContainer">
         <div class="form-row">
@@ -65,7 +65,7 @@
     <button type="submit" class="btn-submit">সেভ করুন</button>
 </form>
 
-<h2>সংরক্ষিত তথ্য (অনলাইন ক্লাউড ডাটাবেজ)</h2>
+<h2>সংরक्षित তথ্য (অনলাইন ক্লাউড ডাটাবেজ)</h2>
 <table id="resultTable">
     <thead>
     <tr>
@@ -97,7 +97,7 @@
         <td>স্ত্রী</td>
         <td>আমেনা খাতুন</td>
         <td>১/৮</td>
-        <td>৫ भाग</td>
+        <td>৫ ভাগ</td>
         <td>১২.৫%</td>
         <td><span id="share-stri" style="font-weight: bold;">০.০০ ডেসিম্যাল</span> <span class="breakdown-text">ব্রেকডাউন: মূল সম্পত্তি থেকে স্ত্রী হিসেবে প্রাপ্য।</span></td>
     </tr>
@@ -146,7 +146,7 @@
         <td>আমেনা খাতুন</td>
         <td>১/৬</td>
         <td>১২ ভাগ</td>
-        <td>১৬.67%</td>
+        <td>১৬.৬৭%</td>
         <td><span id="aziz-ma" style="font-weight: bold;">০.০০ ডেসিম্যাল</span> <span class="breakdown-text">ব্রেকডাউন: মৃত ছেলে আব্দুল আজিজের সম্পত্তি থেকে মা হিসেবে প্রাপ্য।</span></td>
     </tr>
     <tr>
@@ -194,13 +194,13 @@
         <td>সুফিয়া খাতুন</td>
         <td>অবशिष्टের ১ ভাগ</td>
         <td>১ ভাগ</td>
-        <td>১.৩৯%</td>
+        <td>১.智障%</td>
         <td><span id="aziz-bon" style="font-weight: bold;">০.০০ ডেসিম্যাল</span> <span class="breakdown-text">ব্রেকডাউন: মৃত ভাই আব্দুল আজিজের সম্পত্তি থেকে বোন হিসেবে অবশিষ্ট অংশ।</span></td>
     </tr>
     </tbody>
 </table>
 
-<h2>আমেনা খাতুন এর সর্বমোট সম্পত্তির ফরায়েজ বণ্টন (১৫ ভাগ ফর্মুলা)</h2>
+<h2>আমেনার ঘর (১৫ ভাগ ফর্মুলা)</h2>
 <div id="amenaSummaryPanel" class="info-panel amena-panel">
     <strong>আমেনা খাতুন এর সর্বমোট সম্পত্তির পরিমাণ:</strong> <span id="amena-total-val" style="font-weight: bold; color: #2e7d32;">০.০০ ডেসিম্যাল</span><br>
     <span id="amena-total-breakdown" style="font-size: 13px; color: #444;">উৎস হিসাব: মূল ঘরের স্ত্রী অংশ (০.০০ ডেসিম্যাল) + মৃত ছেলে আজিজের ঘরের মাতার অংশ (০.০০ ডেসিম্যাল)</span>
@@ -245,7 +245,7 @@
     <tr>
         <td>-</td>
         <td>১ম ঘরের নাতনি</td>
-        <td>لاকী আক্তার</td>
+        <td>লাকী আক্তার</td>
         <td>২ ভাগ</td>
         <td>১৩.৩৩%</td>
         <td><span id="amena-natni3" style="font-weight: bold;">০.০০ ডেসিম্যাল</span> <span id="amena-natni3-breakdown" class="breakdown-text">০.০০ ডেসিম্যাল</span></td>
@@ -255,7 +255,7 @@
         <td>২য় ঘরের নাতি</td>
         <td>মোশারফ হোসেন</td>
         <td>৪ ভাগ</td>
-        <td>২৬.৬৭%</td>
+        <td>২৬.67%</td>
         <td><span id="amena-nati" style="font-weight: bold;">০.০০ ডেসিম্যাল</span> <span id="amena-nati-breakdown" class="breakdown-text">০.০০ ডেসিম্যাল</span></td>
     </tr>
     <tr>
@@ -394,7 +394,7 @@
 <script>
     // Firebase Configuration
     const firebaseConfig = {
-        databaseURL: "https://land-data-system-default-rtdb.firebaseio.com/"
+        databaseURL: "https://land-data-759e6-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
 
     // Initialize Firebase
@@ -568,7 +568,6 @@
         document.getElementById('amena-natni-salma-breakdown').innerText = `ব্রেকডাউন: আমেনা খাতুনের সর্বমোট সম্পত্তির ১৫ ভাগের ২ ভাগ।`;
 
         // Table 5: Shanoar Hossein (24 Shares)
-        // সংশোধন: এখানে শুধু ছানোয়ারের নিজস্ব ঘর (পিতা + ভাই) থেকে প্রাপ্ত টোটাল লজিক থাকবে। কোনো দাদীর অংশ ইনজেক্ট হবে না।
         const shanoarTotalProperty = shanoarChele1Share + shanoarBhaiShare;
         const shanoarStri = (shanoarTotalProperty * 3) / 24;
         const shanoarCheleFromFather = (shanoarTotalProperty * 14) / 24;
@@ -594,7 +593,7 @@
         document.getElementById('grand-sufia-breakdown').innerText = `মূল সম্পত্তি (৭/৪০ অংশ): ${convertToBanglaNumber(meyeShare.toFixed(4))} ডেসিম্যাল + আজিজের ঘর (১/৭২ অংশ): ${convertToBanglaNumber(bonShare.toFixed(4))} ডেসিম্যাল + মা আমেনার ঘর (৩/১৫ অংশ): ${convertToBanglaNumber(amenaMeye.toFixed(4))} ডেসিম্যাল।`;
 
         const totalRahima = striAzizShare;
-        document.getElementById('grand-rawhima').innerText = convertToBanglaNumber(totalRahima.toFixed(4)) + " ডেসিম্যাল";
+        document.getElementById('grand-rahima').innerText = convertToBanglaNumber(totalRahima.toFixed(4)) + " ডেসিম্যাল"; // স্পেলিং ফিক্সড: grand-rahima
         document.getElementById('grand-rahima-breakdown').innerText = `মৃত স্বামী আব্দুল আজিজের সম্পত্তি থেকে (৯/৭২ অংশ) প্রাপ্য।`;
 
         const totalAlpona = konna1Share + amenaNatni1;
