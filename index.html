@@ -35,7 +35,7 @@
             border: 1px solid #e0e0e0;
             border-radius: 4px;
         }
-        input {
+        input, select {
             padding: 10px;
             font-size: 14px;
             width: 100%;
@@ -57,6 +57,36 @@
         .btn-action { padding: 6px 12px; font-size: 13px; margin-bottom: 5px; margin-right: 5px; color: white; display: inline-block; }
         .btn-edit { background-color: #ff9800; }
         .btn-delete { background-color: #f44336; }
+        .btn-save-current { background-color: #ff5722; color: white; font-size: 15px; padding: 10px 20px; margin-top: 10px; }
+
+        /* Panels & Managers */
+        .manager-panel {
+            background: #e3f2fd;
+            padding: 15px;
+            border: 1px solid #90caf9;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .save-instance-panel {
+            background: #efebe9;
+            padding: 15px;
+            border: 1px solid #bcaaa4;
+            border-radius: 4px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .control-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
         /* Responsive Table Container */
         .table-responsive {
@@ -64,7 +94,7 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             margin-top: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             background: #fff;
@@ -115,6 +145,14 @@
                 border: none;
                 margin-bottom: 10px;
             }
+            .manager-panel, .save-instance-panel {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .control-row {
+                width: 70%;
+            }
             .btn-remove { width: auto; margin-top: 0; }
             .btn-submit { width: auto; padding: 10px 20px; font-size: 14px; }
             .col-porimap { width: 15%; }
@@ -155,6 +193,17 @@
 </head>
 <body>
 
+<h2>সংরক্ষিত ফাইল লোড করুন (Saved Files Manager)</h2>
+<div class="manager-panel">
+    <div class="control-row">
+        <label style="font-weight: bold; min-width: 110px;">ফাইল বা রেকর্ড:</label>
+        <select id="instanceSelect" onchange="changeInstance()">
+            <option value="default_instance">Default Table Data (প্রধান টেবিল ডাটা)</option>
+        </select>
+    </div>
+    <button type="button" class="btn-action btn-delete" onclick="deleteCurrentInstance()" style="margin: 0;">এই ফাইলটি সম্পূর্ণ মুছুন</button>
+</div>
+
 <h2>জমির তথ্য প্রদান করুন</h2>
 <form id="repeaterForm">
     <div id="repeaterContainer">
@@ -167,10 +216,10 @@
         </div>
     </div>
     <button type="button" class="btn-add" onclick="addFormRow()">আরও যোগ করুন</button>
-    <button type="submit" class="btn-submit">সেভ করুন</button>
+    <button type="submit" class="btn-submit">টেবিলে যোগ করুন</button>
 </form>
 
-<h2>সংরক্ষিত তথ্য (অনলাইন ক্লাউড ডাটাবেজ)</h2>
+<h2>সংরক্ষিত তথ্য (চলতি ফাইল: <span id="currentInstanceLabel" style="color: #008CBA; font-weight: bold;">default_instance</span>)</h2>
 <div class="table-responsive">
     <table id="resultTable">
         <thead>
@@ -185,6 +234,16 @@
         <tbody></tbody>
         <tfoot></tfoot>
     </table>
+</div>
+
+<button type="button" class="btn-save-current" onclick="saveCurrentTableChanges()">বর্তমান ফাইলের পরিবর্তনগুলো সংরক্ষণ (Save File) করুন</button>
+
+<h2>ঐচ্ছিক সুবিধা: বর্তমান ডাটা নতুন ফাইল হিসেবে সংরক্ষণ করুন</h2>
+<div class="save-instance-panel">
+    <div class="control-row" style="width: 100%;">
+        <input type="text" id="targetInstanceName" placeholder="ফাইল বা রেকর্ডের নাম লিখুন (উদা: রহিম মিয়ার হিসাব)" style="max-width: 350px; background: #fff;">
+        <button type="button" class="btn-add" onclick="saveAsNewInstance()" style="white-space: nowrap;">নতুন ফাইল নামে সেভ করুন</button>
+    </div>
 </div>
 
 <h2>অংশীদারদের মধ্যে পরিমাপ বণ্টন (৪০ ভাগ ফর্মুলা)</h2>
@@ -358,7 +417,7 @@
             <td>-</td>
             <td>মৃত পুত্রের নাতনি</td>
             <td>লাভলী আক্তার</td>
-            <td>২ भाग</td>
+            <td>২ ভাগ</td>
             <td>১১.১১%</td>
             <td><span id="amena-natni2" style="font-weight: bold;">০.০০ ডেসিম্যাল</span> <span id="amena-natni2-breakdown" class="breakdown-text">০.০০ ডেসিম্যাল</span></td>
         </tr>
@@ -403,7 +462,7 @@
         </tr>
         <tr>
             <td>১ ছেলে</td>
-            <td>মোশারফ হোসেন</td>
+            <td>মোশারф হোসেন</td>
             <td>অবশিষ্টের ২ ভাগ</td>
             <td>১৪ ভাগ</td>
             <td>৫৮.৩৩%</td>
@@ -500,6 +559,10 @@
     </div>
 </div>
 
+<div class="iframe-container">
+    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https://mosharof85.github.io/land-system/sale.docx"></iframe>
+</div>
+
 <script>
     // Firebase Configuration
     const firebaseConfig = {
@@ -510,7 +573,14 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    document.addEventListener('DOMContentLoaded', listenToOnlineData);
+    // Global variable to keep track of selected instance
+    let currentInstance = 'default_instance';
+    let currentTableCachedData = []; // Local cache state for current table manipulation
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadInstanceList();
+        fetchOnlineDataOnce(); // Fetch data when application loads
+    });
 
     function convertToBanglaNumber(inputString) {
         if (inputString === undefined || inputString === null) return '';
@@ -551,15 +621,50 @@
         else alert("কমপক্ষে একটি সারি থাকতে হবে!");
     }
 
-    // ONLINE SAVE OPERATION
+    // LOAD INSTANCE LIST FOR DROPDOWN
+    function loadInstanceList() {
+        database.ref('instances').on('value', (snapshot) => {
+            const select = document.getElementById('instanceSelect');
+            select.innerHTML = '';
+
+            // Default option
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = 'default_instance';
+            defaultOpt.innerText = 'Default Table Data (প্রধান টেবিল ডাটা)';
+            select.appendChild(defaultOpt);
+
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    if(key !== 'default_instance') {
+                        const opt = document.createElement('option');
+                        opt.value = key;
+                        opt.innerText = data[key].name;
+                        select.appendChild(opt);
+                    }
+                });
+            }
+            select.value = currentInstance;
+        });
+    }
+
+    // INSTANCE CHANGED FROM DROPDOWN
+    function changeInstance() {
+        currentInstance = document.getElementById('instanceSelect').value;
+        document.getElementById('currentInstanceLabel').innerText = currentInstance;
+        fetchOnlineDataOnce(); // Just load data once, don't keep live listener for automatic saves
+    }
+
+    // ADD INPUT DATA ONLY TO LOCAL TABLE STATE (NOT AUTOMATIC ONLINE SAVE)
     document.getElementById('repeaterForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const rows = document.querySelectorAll('.form-row');
 
         rows.forEach(row => {
             const inputs = row.querySelectorAll('input');
-            const newLandRef = database.ref('landData').push();
-            newLandRef.set({
+            // Push to local array state with a temporary local ID
+            currentTableCachedData.push({
+                id: 'local_' + Date.now() + Math.random().toString(36).substr(2, 5),
                 khotiyan: convertToBanglaNumber(inputs[0].value),
                 dag: convertToBanglaNumber(inputs[1].value),
                 porimap: convertToBanglaNumber(inputs[2].value),
@@ -567,6 +672,10 @@
             });
         });
 
+        // Refresh visible UI table view
+        renderTableData(currentTableCachedData);
+
+        // Reset repeater rows back to 1 empty row
         document.getElementById('repeaterContainer').innerHTML = `
                 <div class="form-row">
                     <input type="text" placeholder="খতিয়ান নং" required>
@@ -579,9 +688,78 @@
         document.getElementById('repeaterForm').reset();
     });
 
-    // ONLINE LIVE FETCH
-    function listenToOnlineData() {
-        database.ref('landData').on('value', (snapshot) => {
+    // MANUAL SAVE BUTTON ACTION: Commit all local changes to active instance path in Firebase
+    function saveCurrentTableChanges() {
+        if (confirm(`আপনি কি বর্তমান টেবিলের সমস্ত পরিবর্তন "${currentInstance}" ফাইলে সেভ করতে চান?`)) {
+            const targetRef = database.ref('landData/' + currentInstance);
+
+            // Clear online path first, then push full refreshed set
+            targetRef.remove().then(() => {
+                if (currentTableCachedData.length > 0) {
+                    currentTableCachedData.forEach(item => {
+                        const rowRef = targetRef.push();
+                        rowRef.set({
+                            khotiyan: item.khotiyan,
+                            dag: item.dag,
+                            porimap: item.porimap,
+                            montobbo: item.montobbo
+                        });
+                    });
+                }
+                alert("বর্তমান ফাইলের সমস্ত পরিবর্তন সফলভাবে অনলাইনে সংরক্ষণ করা হয়েছে!");
+                fetchOnlineDataOnce(); // Reload to refresh cleanly
+            });
+        }
+    }
+
+    // NEW FILE INSTANCE CREATION FROM CURRENT STATE
+    function saveAsNewInstance() {
+        const instanceNameInput = document.getElementById('targetInstanceName').value.trim();
+        if(!instanceNameInput) {
+            alert("অনুগ্রহ করে নতুন ফাইলের একটি নাম দিন!");
+            return;
+        }
+
+        if(currentTableCachedData.length === 0) {
+            alert("টেবিলে কোনো ডাটা নেই যা সেভ করা যাবে।");
+            return;
+        }
+
+        let instanceKey = instanceNameInput.replace(/[.#$\[\]]/g, "-");
+
+        if(instanceKey === 'default_instance') {
+            alert("এই নামটি ব্যবহার করা যাবে না। অন্য নাম দিন।");
+            return;
+        }
+
+        database.ref('instances/' + instanceKey).set({
+            name: instanceNameInput
+        });
+
+        const targetRef = database.ref('landData/' + instanceKey);
+        targetRef.remove();
+
+        currentTableCachedData.forEach(item => {
+            const rowRef = targetRef.push();
+            rowRef.set({
+                khotiyan: item.khotiyan,
+                dag: item.dag,
+                porimap: item.porimap,
+                montobbo: item.montobbo
+            });
+        });
+
+        alert(`সফলভাবে "${instanceNameInput}" নামে নতুন ফাইল তৈরি ও সেভ করা হয়েছে!`);
+        document.getElementById('targetInstanceName').value = '';
+
+        currentInstance = instanceKey;
+        document.getElementById('currentInstanceLabel').innerText = currentInstance;
+        fetchOnlineDataOnce();
+    }
+
+    // EXPLICIT ONCE-FETCH LOAD OPERATIONS
+    function fetchOnlineDataOnce() {
+        database.ref('landData/' + currentInstance).once('value', (snapshot) => {
             const data = snapshot.val();
             const savedData = [];
             if (data) {
@@ -589,6 +767,7 @@
                     savedData.push({ id: key, ...data[key] });
                 });
             }
+            currentTableCachedData = savedData; // Overwrite cache state with freshly fetched file data
             renderTableData(savedData);
         });
     }
@@ -598,7 +777,7 @@
         const tableFoot = document.querySelector('#resultTable tfoot');
         tableBody.innerHTML = ''; tableFoot.innerHTML = '';
 
-        // Sort automatically by Khotiyan first, and if Khotiyan is equal, sort by Dag
+        // Sort data locally
         savedData.sort((a, b) => {
             const numA_khotiyan = convertToEnglishNumber(a.khotiyan);
             const numB_khotiyan = convertToEnglishNumber(b.khotiyan);
@@ -632,6 +811,8 @@
             totalTr.className = 'total-row';
             totalTr.innerHTML = `<td colspan="2" style="text-align: right;">সর্বমোট পরিমাপ:</td><td colspan="3">${convertToBanglaNumber(totalPorimap.toFixed(4))} ডেসিম্যাল</td>`;
             tableFoot.appendChild(totalTr);
+        } else {
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">এই ফাইলে কোনো ডাটা সংরক্ষিত নেই বা এখনও সেভ করা হয়নি।</td></tr>`;
         }
         updateShareTable(totalPorimap);
     }
@@ -714,7 +895,7 @@
         fixText('grand-sufia-breakdown', `মূল সম্পত্তি (৭/৪০ অংশ): ${convertToBanglaNumber(meyeShare.toFixed(4))} ডেসিম্যাল + আজিজের ঘর (১/৭২ অংশ): ${convertToBanglaNumber(bonShare.toFixed(4))} ডেসিম্যাল + মা আমেনার ঘর (৪/১৮ অংশ): ${convertToBanglaNumber(amenaMeye.toFixed(4))} ডেসিম্যাল।`);
 
         const totalRahima = striAzizShare;
-        const elRahima = document.getElementById('grand-rahima') || document.getElementById('grand-rawhima');
+        const elRahima = document.getElementById('grand-rahima');
         if(elRahima) elRahima.innerText = convertToBanglaNumber(totalRahima.toFixed(4)) + " ডেসিম্যাল";
         fixText('grand-rahima-breakdown', `মৃত স্বামী আব্দুল আজিজের সম্পত্তি থেকে (৯/৭২ অংশ) প্রাপ্য।`);
 
@@ -743,10 +924,26 @@
         fixText('grand-salma-breakdown', `পিতা ছানোয়ারের ঘর (৭/২৪ অংশ) থেকে প্রাপ্য।`);
     }
 
-    // ONLINE DELETE OPERATION
+    // LOCAL CACHE ROW DELETE OPERATION
     function deleteData(id) {
-        if (confirm("আপনি কি এই তথ্যটি ডাটাবেজ থেকে ডিলিট করতে চান?")) {
-            database.ref('landData/' + id).remove();
+        if (confirm("আপনি কি এই সারিটি সাময়িকভাবে টেবিল থেকে সরাতে চান? (অনলাইনে সেভ করতে নিচের কমলা বাটনে চাপুন)")) {
+            currentTableCachedData = currentTableCachedData.filter(item => item.id !== id);
+            renderTableData(currentTableCachedData);
+        }
+    }
+
+    // DELETE WHOLE FILE FROM DATABASE
+    function deleteCurrentInstance() {
+        if (currentInstance === 'default_instance') {
+            alert("প্রধান টেবিল ডাটা (Default) ফাইলটি সম্পূর্ণ ডিলিট করা যাবে না।");
+            return;
+        }
+        if (confirm(`আপনি কি সম্পূর্ণ "${currentInstance}" ফাইলটি এবং এর ভেতরের সব ডাটা ডাটাবেজ থেকে চিরতরে ডিলিট করতে চান?`)) {
+            database.ref('landData/' + currentInstance).remove();
+            database.ref('instances/' + currentInstance).remove();
+            currentInstance = 'default_instance';
+            document.getElementById('currentInstanceLabel').innerText = currentInstance;
+            fetchOnlineDataOnce();
         }
     }
 
@@ -761,7 +958,7 @@
 
     function closeModal() { document.getElementById('editModal').style.display = 'none'; }
 
-    // ONLINE UPDATE OPERATION
+    // LOCAL CACHE ROW EDIT/UPDATE OPERATION
     function saveEditedData() {
         const id = document.getElementById('editId').value;
         const khotiyan = convertToBanglaNumber(document.getElementById('editKhotiyan').value);
@@ -769,20 +966,18 @@
         const porimap = convertToBanglaNumber(document.getElementById('editPorimap').value);
         const montobbo = convertToBanglaNumber(document.getElementById('editMontobbo').value);
 
-        database.ref('landData/' + id).set({
-            khotiyan: khotiyan,
-            dag: dag,
-            porimap: porimap,
-            montobbo: montobbo
-        }, function(error) {
-            if(!error) closeModal();
+        // Map and update changes in local array
+        currentTableCachedData = currentTableCachedData.map(item => {
+            if(item.id === id) {
+                return { id, khotiyan, dag, porimap, montobbo };
+            }
+            return item;
         });
+
+        renderTableData(currentTableCachedData);
+        closeModal();
     }
 </script>
-
-<div class="iframe-container">
-    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https://mosharof85.github.io/land-system/sale.docx"></iframe>
-</div>
 
 </body>
 </html>
