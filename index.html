@@ -57,7 +57,17 @@
         .btn-action { padding: 6px 12px; font-size: 13px; margin-bottom: 5px; margin-right: 5px; color: white; display: inline-block; }
         .btn-edit { background-color: #ff9800; }
         .btn-delete { background-color: #f44336; }
-        .btn-save-current { background-color: #ff5722; color: white; font-size: 15px; padding: 10px 20px; margin-top: 10px; }
+
+        /* Action Row for Buttons */
+        .action-button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .btn-save-current { background-color: #ff5722; color: white; font-size: 14px; padding: 12px 20px; }
+        .btn-save-new { background-color: #9c27b0; color: white; font-size: 14px; padding: 12px 20px; }
 
         /* Panels & Managers */
         .manager-panel {
@@ -66,17 +76,6 @@
             border: 1px solid #90caf9;
             border-radius: 4px;
             margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .save-instance-panel {
-            background: #efebe9;
-            padding: 15px;
-            border: 1px solid #bcaaa4;
-            border-radius: 4px;
-            margin-top: 15px;
-            margin-bottom: 25px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -145,7 +144,7 @@
                 border: none;
                 margin-bottom: 10px;
             }
-            .manager-panel, .save-instance-panel {
+            .manager-panel {
                 flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
@@ -236,14 +235,10 @@
     </table>
 </div>
 
-<button type="button" class="btn-save-current" onclick="saveCurrentTableChanges()">বর্তমান ফাইলের পরিবর্তনগুলো সংরক্ষণ (Save File) করুন</button>
-
-<h2>ঐচ্ছিক সুবিধা: বর্তমান ডাটা নতুন ফাইল হিসেবে সংরক্ষণ করুন</h2>
-<div class="save-instance-panel">
-    <div class="control-row" style="width: 100%;">
-        <input type="text" id="targetInstanceName" placeholder="ফাইল বা রেকর্ডের নাম লিখুন (উদা: রহিম মিয়ার হিসাব)" style="max-width: 350px; background: #fff;">
-        <button type="button" class="btn-add" onclick="saveAsNewInstance()" style="white-space: nowrap;">নতুন ফাইল নামে সেভ করুন</button>
-    </div>
+<!-- BUTTON GROUP PLACED SIDE BY SIDE -->
+<div class="action-button-group">
+    <button type="button" class="btn-save-current" onclick="saveCurrentTableChanges()">বর্তমান ফাইলের পরিবর্তনগুলো সংরক্ষণ (Save File) করুন</button>
+    <button type="button" class="btn-save-new" onclick="saveAsNewInstancePopup()">নতুন ফাইল নামে সেভ করুন</button>
 </div>
 
 <h2>অংশীদারদের মধ্যে পরিমাপ বণ্টন (৪০ ভাগ ফর্মুলা)</h2>
@@ -320,7 +315,7 @@
         </tr>
         <tr>
             <td>স্ত্রী</td>
-            <td>রহিমা খানম</td>
+            <td>রহিমা khanম</td>
             <td>১/৮</td>
             <td>৯ ভাগ</td>
             <td>১২.৫%</td>
@@ -355,7 +350,7 @@
             <td>ছানোয়ার হোসেন</td>
             <td>অবশিষ্টের ২ ভাগ</td>
             <td>২ ভাগ</td>
-            <td>২.৭৮%</td>
+            <td>২.7৮%</td>
             <td><span id="aziz-bhai" style="font-weight: bold;">০.০০ ডেসিম্যাল</span> <span class="breakdown-text">ব্রেকডাউন: মৃত ভাই আব্দুল আজিজের সম্পত্তি থেকে ভাই হিসেবে অবশিষ্ট অংশ।</span></td>
         </tr>
         <tr>
@@ -462,7 +457,7 @@
         </tr>
         <tr>
             <td>১ ছেলে</td>
-            <td>মোশারф হোসেন</td>
+            <td>মোশারফ হোসেন</td>
             <td>অবশিষ্টের ২ ভাগ</td>
             <td>১৪ ভাগ</td>
             <td>৫৮.৩৩%</td>
@@ -546,7 +541,7 @@
 
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <h3>정보 수정 (정보 সংশোধন করুন)</h3>
+        <h3>তথ্য সংশোধন করুন</h3>
         <input type="hidden" id="editId">
         <label>খতিয়ান নং:</label><input type="text" id="editKhotiyan" required>
         <label>দাগ নং:</label><input type="text" id="editDag" required>
@@ -564,22 +559,19 @@
 </div>
 
 <script>
-    // Firebase Configuration
     const firebaseConfig = {
         databaseURL: "https://land-data-759e6-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // Global variable to keep track of selected instance
     let currentInstance = 'default_instance';
-    let currentTableCachedData = []; // Local cache state for current table manipulation
+    let currentTableCachedData = [];
 
     document.addEventListener('DOMContentLoaded', () => {
         loadInstanceList();
-        fetchOnlineDataOnce(); // Fetch data when application loads
+        fetchOnlineDataOnce();
     });
 
     function convertToBanglaNumber(inputString) {
@@ -621,13 +613,11 @@
         else alert("কমপক্ষে একটি সারি থাকতে হবে!");
     }
 
-    // LOAD INSTANCE LIST FOR DROPDOWN
     function loadInstanceList() {
         database.ref('instances').on('value', (snapshot) => {
             const select = document.getElementById('instanceSelect');
             select.innerHTML = '';
 
-            // Default option
             const defaultOpt = document.createElement('option');
             defaultOpt.value = 'default_instance';
             defaultOpt.innerText = 'Default Table Data (প্রধান টেবিল ডাটা)';
@@ -648,21 +638,18 @@
         });
     }
 
-    // INSTANCE CHANGED FROM DROPDOWN
     function changeInstance() {
         currentInstance = document.getElementById('instanceSelect').value;
         document.getElementById('currentInstanceLabel').innerText = currentInstance;
-        fetchOnlineDataOnce(); // Just load data once, don't keep live listener for automatic saves
+        fetchOnlineDataOnce();
     }
 
-    // ADD INPUT DATA ONLY TO LOCAL TABLE STATE (NOT AUTOMATIC ONLINE SAVE)
     document.getElementById('repeaterForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const rows = document.querySelectorAll('.form-row');
 
         rows.forEach(row => {
             const inputs = row.querySelectorAll('input');
-            // Push to local array state with a temporary local ID
             currentTableCachedData.push({
                 id: 'local_' + Date.now() + Math.random().toString(36).substr(2, 5),
                 khotiyan: convertToBanglaNumber(inputs[0].value),
@@ -672,10 +659,8 @@
             });
         });
 
-        // Refresh visible UI table view
         renderTableData(currentTableCachedData);
 
-        // Reset repeater rows back to 1 empty row
         document.getElementById('repeaterContainer').innerHTML = `
                 <div class="form-row">
                     <input type="text" placeholder="খতিয়ান নং" required>
@@ -688,12 +673,10 @@
         document.getElementById('repeaterForm').reset();
     });
 
-    // MANUAL SAVE BUTTON ACTION: Commit all local changes to active instance path in Firebase
     function saveCurrentTableChanges() {
         if (confirm(`আপনি কি বর্তমান টেবিলের সমস্ত পরিবর্তন "${currentInstance}" ফাইলে সেভ করতে চান?`)) {
             const targetRef = database.ref('landData/' + currentInstance);
 
-            // Clear online path first, then push full refreshed set
             targetRef.remove().then(() => {
                 if (currentTableCachedData.length > 0) {
                     currentTableCachedData.forEach(item => {
@@ -707,21 +690,26 @@
                     });
                 }
                 alert("বর্তমান ফাইলের সমস্ত পরিবর্তন সফলভাবে অনলাইনে সংরক্ষণ করা হয়েছে!");
-                fetchOnlineDataOnce(); // Reload to refresh cleanly
+                fetchOnlineDataOnce();
             });
         }
     }
 
-    // NEW FILE INSTANCE CREATION FROM CURRENT STATE
-    function saveAsNewInstance() {
-        const instanceNameInput = document.getElementById('targetInstanceName').value.trim();
-        if(!instanceNameInput) {
-            alert("অনুগ্রহ করে নতুন ফাইলের একটি নাম দিন!");
+    // NEW REWORKED POPUP SAVE SYSTEM
+    function saveAsNewInstancePopup() {
+        if(currentTableCachedData.length === 0) {
+            alert("টেবিলে কোনো ডাটা নেই যা সেভ করা যাবে।");
             return;
         }
 
-        if(currentTableCachedData.length === 0) {
-            alert("টেবিলে কোনো ডাটা নেই যা সেভ করা যাবে।");
+        // JavaScript prompt acts as a built-in popup
+        let instanceNameInput = prompt("নতুন ফাইল বা রেকর্ডের নাম লিখুন (উদা: রহিম মিয়ার হিসাব):");
+
+        if (instanceNameInput === null) return; // Cancel click setup
+        instanceNameInput = instanceNameInput.trim();
+
+        if(!instanceNameInput) {
+            alert("অনুগ্রহ করে নতুন ফাইলের একটি সঠিক নাম দিন!");
             return;
         }
 
@@ -750,14 +738,12 @@
         });
 
         alert(`সফলভাবে "${instanceNameInput}" নামে নতুন ফাইল তৈরি ও সেভ করা হয়েছে!`);
-        document.getElementById('targetInstanceName').value = '';
 
         currentInstance = instanceKey;
         document.getElementById('currentInstanceLabel').innerText = currentInstance;
         fetchOnlineDataOnce();
     }
 
-    // EXPLICIT ONCE-FETCH LOAD OPERATIONS
     function fetchOnlineDataOnce() {
         database.ref('landData/' + currentInstance).once('value', (snapshot) => {
             const data = snapshot.val();
@@ -767,7 +753,7 @@
                     savedData.push({ id: key, ...data[key] });
                 });
             }
-            currentTableCachedData = savedData; // Overwrite cache state with freshly fetched file data
+            currentTableCachedData = savedData;
             renderTableData(savedData);
         });
     }
@@ -777,18 +763,11 @@
         const tableFoot = document.querySelector('#resultTable tfoot');
         tableBody.innerHTML = ''; tableFoot.innerHTML = '';
 
-        // Sort data locally
         savedData.sort((a, b) => {
             const numA_khotiyan = convertToEnglishNumber(a.khotiyan);
             const numB_khotiyan = convertToEnglishNumber(b.khotiyan);
-
-            if (numA_khotiyan !== numB_khotiyan) {
-                return numA_khotiyan - numB_khotiyan;
-            }
-
-            const numA_dag = convertToEnglishNumber(a.dag);
-            const numB_dag = convertToEnglishNumber(b.dag);
-            return numA_dag - numB_dag;
+            if (numA_khotiyan !== numB_khotiyan) return numA_khotiyan - numB_khotiyan;
+            return convertToEnglishNumber(a.dag) - convertToEnglishNumber(b.dag);
         });
 
         let totalPorimap = 0;
@@ -818,7 +797,6 @@
     }
 
     function updateShareTable(total) {
-        // Table 2 (40 Shares)
         const amenaWifeShare = (total * 5) / 40;
         const shanoarChele1Share = (total * 14) / 40;
         const azizShare = (total * 14) / 40;
@@ -829,7 +807,6 @@
         fixText('share-chele2', convertToBanglaNumber(azizShare.toFixed(4)) + " ডেসিম্যাল");
         fixText('share-meye', convertToBanglaNumber(meyeShare.toFixed(4)) + " ডেসিম্যাল");
 
-        // Table 3 (72 Shares)
         const maShare = (azizShare * 12) / 72;
         const striAzizShare = (azizShare * 9) / 72;
         const konna1Share = (azizShare * 16) / 72;
@@ -846,7 +823,6 @@
         fixText('aziz-bhai', convertToBanglaNumber(shanoarBhaiShare.toFixed(4)) + " ডেসিম্যাল");
         fixText('aziz-bon', convertToBanglaNumber(bonShare.toFixed(4)) + " ডেসিম্যাল");
 
-        // Table 4: Amena Khatun (18 Shares Formula)
         const amenaTotalProperty = amenaWifeShare + maShare;
         const amenaChele = (amenaTotalProperty * 8) / 18;
         const amenaMeye = (amenaTotalProperty * 4) / 18;
@@ -871,7 +847,6 @@
         fixText('amena-natni3', convertToBanglaNumber(amenaNatni3.toFixed(4)) + " ডেসিম্যাল");
         fixText('amena-natni3-breakdown', rawNatniText);
 
-        // Table 5: Shanoar Hossein (24 Shares)
         const shanoarTotalProperty = shanoarChele1Share + shanoarBhaiShare + amenaChele;
         const shanoarStri = (shanoarTotalProperty * 3) / 24;
         const shanoarCheleFromFather = (shanoarTotalProperty * 14) / 24;
@@ -889,7 +864,6 @@
         fixText('shanoar-meye-from-father', convertToBanglaNumber(shanoarMeyeFromFather.toFixed(4)) + " ডেসিম্যাল");
         fixText('shanoar-meye-from-father-breakdown', `ব্রেকডাউন: পিতা ছানোয়ারের মোট সম্পত্তির (${convertToBanglaNumber(shanoarTotalProperty.toFixed(4))} ডেসিম্যাল) এর ৭/২৪ অংশ।`);
 
-        // Grand Totals Summary
         const totalSufia = meyeShare + bonShare + amenaMeye;
         fixText('grand-sufia', convertToBanglaNumber(totalSufia.toFixed(4)) + " ডেসিম্যাল");
         fixText('grand-sufia-breakdown', `মূল সম্পত্তি (৭/৪০ অংশ): ${convertToBanglaNumber(meyeShare.toFixed(4))} ডেসিম্যাল + আজিজের ঘর (১/৭২ অংশ): ${convertToBanglaNumber(bonShare.toFixed(4))} ডেসিম্যাল + মা আমেনার ঘর (৪/১৮ অংশ): ${convertToBanglaNumber(amenaMeye.toFixed(4))} ডেসিম্যাল।`);
@@ -924,7 +898,6 @@
         fixText('grand-salma-breakdown', `পিতা ছানোয়ারের ঘর (৭/২৪ অংশ) থেকে প্রাপ্য।`);
     }
 
-    // LOCAL CACHE ROW DELETE OPERATION
     function deleteData(id) {
         if (confirm("আপনি কি এই সারিটি সাময়িকভাবে টেবিল থেকে সরাতে চান? (অনলাইনে সেভ করতে নিচের কমলা বাটনে চাপুন)")) {
             currentTableCachedData = currentTableCachedData.filter(item => item.id !== id);
@@ -932,7 +905,6 @@
         }
     }
 
-    // DELETE WHOLE FILE FROM DATABASE
     function deleteCurrentInstance() {
         if (currentInstance === 'default_instance') {
             alert("প্রধান টেবিল ডাটা (Default) ফাইলটি সম্পূর্ণ ডিলিট করা যাবে না।");
@@ -958,7 +930,6 @@
 
     function closeModal() { document.getElementById('editModal').style.display = 'none'; }
 
-    // LOCAL CACHE ROW EDIT/UPDATE OPERATION
     function saveEditedData() {
         const id = document.getElementById('editId').value;
         const khotiyan = convertToBanglaNumber(document.getElementById('editKhotiyan').value);
@@ -966,7 +937,6 @@
         const porimap = convertToBanglaNumber(document.getElementById('editPorimap').value);
         const montobbo = convertToBanglaNumber(document.getElementById('editMontobbo').value);
 
-        // Map and update changes in local array
         currentTableCachedData = currentTableCachedData.map(item => {
             if(item.id === id) {
                 return { id, khotiyan, dag, porimap, montobbo };
